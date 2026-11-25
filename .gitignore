@@ -46,3 +46,6 @@ dist/
 *.egg-info/
 
 # Model and data artifacts - review before committing
+
+/train.csv
+/test.csv
