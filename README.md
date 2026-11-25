@@ -202,6 +202,78 @@ Flask-SQLAlchemy is used to interact with the database through ORM models.
 
 The database connection is configured using environment variables to keep sensitive configuration details outside the source code.
 
+
+erDiagram
+    USERS {
+        int id PK
+        string name
+        string email UK
+        string password
+        string role
+        datetime created_at
+    }
+
+    ORGANIZATIONS {
+        int id PK
+        int user_id FK, UK
+        string organization_name
+        string location
+        float capacity_kg
+        string phone
+        string accepted_categories
+    }
+
+    FOOD_CATEGORIES {
+        int id PK
+        string name UK
+    }
+
+    ORGANIZATION_CATEGORIES {
+        int organization_id PK, FK
+        int category_id PK, FK
+    }
+
+    FOOD_DONATIONS {
+        int id PK
+        int donor_id FK
+        string food_name
+        string category
+        float quantity_kg
+        date expiry_date
+        string location
+        string status
+        datetime created_at
+        boolean is_archived
+        datetime archived_at
+    }
+
+    MATCHES {
+        int id PK
+        int donation_id FK
+        int organization_id FK
+        string status
+        datetime matched_at
+    }
+
+    PREDICTION_LOGS {
+        int id PK
+        int donor_id FK
+        float predicted_waste
+        float actual_waste
+        datetime prediction_date
+    }
+
+    USERS ||--o| ORGANIZATIONS : has
+    USERS ||--o{ FOOD_DONATIONS : creates
+    USERS ||--o{ PREDICTION_LOGS : records
+
+    FOOD_DONATIONS ||--o{ MATCHES : has
+    ORGANIZATIONS ||--o{ MATCHES : receives
+
+    ORGANIZATIONS ||--o{ ORGANIZATION_CATEGORIES : has
+    FOOD_CATEGORIES ||--o{ ORGANIZATION_CATEGORIES : includes
+
+
 ---
 
 ## Installation and Setup
