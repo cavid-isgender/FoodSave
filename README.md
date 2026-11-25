@@ -194,6 +194,7 @@ The prediction result is returned in kilograms.
 
 ---
 
+
 ## Database
 
 FoodSave uses PostgreSQL as its relational database management system.
@@ -202,7 +203,11 @@ Flask-SQLAlchemy is used to interact with the database through ORM models.
 
 The database connection is configured using environment variables to keep sensitive configuration details outside the source code.
 
+### Entity Relationship Diagram
 
+The following diagram illustrates the database entities and their relationships.
+
+```mermaid
 erDiagram
     USERS {
         int id PK
@@ -272,7 +277,7 @@ erDiagram
 
     ORGANIZATIONS ||--o{ ORGANIZATION_CATEGORIES : has
     FOOD_CATEGORIES ||--o{ ORGANIZATION_CATEGORIES : includes
-
+```
 
 ---
 
