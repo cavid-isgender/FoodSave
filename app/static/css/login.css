@@ -1,0 +1,133 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: linear-gradient(
+        135deg,
+        #e8f5ec,
+        #d5eadc,
+        #f4f7f5
+    );
+
+    font-family: Arial, sans-serif;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    background: var(--white, #ffffff);
+    border: 1px solid var(--border, #e5e9e6);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
+    box-sizing: border-box;
+}
+
+.login-container h2 {
+    margin: 0 0 8px;
+    color: var(--primary, #248a55);
+    font-size: 28px;
+    text-align: center;
+}
+
+.login-container > p {
+    margin: 0 0 30px;
+    color: #777;
+    text-align: center;
+    font-size: 14px;
+}
+
+#login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#login-form label {
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#login-form input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dce3de;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#login-form input:focus {
+    border-color: #248a55;
+    box-shadow: 0 0 0 3px rgba(36, 138, 85, 0.12);
+}
+
+#login-form button {
+    margin-top: 12px;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #248a55;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#login-form button:hover {
+    background: #1c7044;
+}
+
+#login-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#login-message {
+    margin-top: 18px;
+    font-size: 14px;
+    text-align: center;
+    color: #d9534f;
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        margin: 20px;
+        padding: 28px;
+    }
+}
+
+/* Authentication links and select */
+
+.auth-link {
+    margin: 22px 0 0 !important;
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+}
+
+.auth-link a {
+    color: #248a55;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+#register-form select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dce3de;
+    border-radius: 8px;
+    background: white;
+    font-size: 14px;
+}

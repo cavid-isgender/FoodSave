@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodSave - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user-info.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+
+<div class="dashboard-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>Food<span>Save</span></h2>
+        </div>
+
+        <nav>
+            <a href="{{ url_for('dashboard') }}" class="nav-link active">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('food_waste_prediction') }}" class="nav-link">
+                Food Waste Prediction
+            </a>
+
+            <a href="{{ url_for('donations_page') }}" class="nav-link">
+                Donations
+            </a>
+
+            <a href="{{ url_for('organizations_page') }}" class="nav-link">
+                Organizations
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-divider"></div>
+
+            <div class="sidebar-footer-content">
+                <div class="sidebar-footer-icon">🌱</div>
+
+                <div class="sidebar-footer-text">
+                    <span>Food Waste Management System</span>
+                </div>
+            </div>
+
+            <p class="sidebar-footer-tagline">
+                Reducing waste. Supporting communities.
+            </p>
+        </div>
+
+        <div class="sidebar-logout">
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </aside>
+
+
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <div id="user-info" class="user-info">
+            <div class="user-avatar">
+                <span id="user-initial">U</span>
+            </div>
+
+            <div class="user-details">
+                <span id="user-name"></span>
+                <span id="user-role"></span>
+            </div>
+        </div>
+
+        <header class="dashboard-header">
+            <h1>Dashboard</h1>
+            <p>Welcome to FoodSave Management System</p>
+        </header>
+
+
+        <!-- Statistics Cards -->
+        <section class="stats-container">
+
+            <div class="stat-card">
+                <h3>Total Predictions</h3>
+                <p id="total-predictions">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Average Food Waste</h3>
+                <p id="average-waste">0 kg</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Latest Prediction</h3>
+                <p id="latest-prediction">0 kg</p>
+            </div>
+
+        </section>
+
+
+        <!-- Dashboard Charts -->
+        <section class="charts-container">
+
+            <div class="chart-card">
+                <h2>Monthly Donations</h2>
+                <canvas id="donations-chart"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <h2>Monthly Predicted Food Waste</h2>
+                <canvas id="waste-chart"></canvas>
+            </div>
+
+        </section>
+
+
+        <section id="incoming-requests-section" hidden>
+            <div class="section-header">
+                <div>
+                    <h2>Incoming Donation Requests</h2>
+                    <p>Organizations requesting your donations</p>
+                </div>
+
+                <button id="refresh-requests-btn">Refresh</button>
+            </div>
+
+            <div id="requests-message"></div>
+            <div id="requests-container"></div>
+        </section>
+
+        <!-- Available Food Donations -->
+        <section class="donations-section">
+
+            <div class="section-header">
+                <div>
+                    <h2 id="donations-heading">Available Food Donations</h2>
+                    <p id="donations-description">Browse available donations and request food from donors.</p>
+                </div>
+
+                <button id="refresh-donations" class="refresh-button">
+                    Refresh
+                </button>
+            </div>
+
+            <div id="donations-message" class="donations-alert"></div>
+
+            <div id="donations-container" class="donations-grid">
+
+                <p class="loading-message">
+                    Loading donations...
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- Organization My Requests -->
+        <section id="my-requests-section" class="dashboard-section" hidden>
+
+            <div class="section-header">
+                <div>
+                    <h2>My Requests</h2>
+                    <p>Track the status of your donation requests.</p>
+                </div>
+
+                <button id="refresh-my-requests" class="refresh-button">
+                    Refresh
+                </button>
+            </div>
+
+            <div id="my-requests-message" class="donations-alert"></div>
+
+            <div id="my-requests-container" class="donations-container">
+                <!-- Requests will be loaded here by JavaScript -->
+            </div>
+
+        </section>
+
+
+        <!-- Recent Predictions Table -->
+        <section class="table-section">
+
+            <div class="section-header">
+                <div>
+                    <h2>Recent Predictions</h2>
+                    <p>Your latest food waste predictions.</p>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="recent-predictions-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Meals Served</th>
+                            <th>Waste Category</th>
+                            <th>Predicted Waste</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="prediction-history">
+                        <tr>
+                            <td colspan="5">Loading predictions...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script src="{{ url_for('static', filename='js/user-info.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+</body>
+</html>
+

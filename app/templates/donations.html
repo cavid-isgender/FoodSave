@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodSave - Donations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user-info.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/donations.css') }}">
+</head>
+<body>
+
+<div class="dashboard-container">
+
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>Food<span>Save</span></h2>
+        </div>
+
+        <nav>
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('food_waste_prediction') }}" class="nav-link">Food Waste Prediction</a>
+            <a href="{{ url_for('donations_page') }}" class="nav-link active">Donations</a>
+            <a href="{{ url_for('organizations_page') }}" class="nav-link">Organizations</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-divider"></div>
+
+            <div class="sidebar-footer-content">
+                <div class="sidebar-footer-icon">🌱</div>
+
+                <div class="sidebar-footer-text">
+                    <span>Food Waste Management System</span>
+                </div>
+            </div>
+
+            <p class="sidebar-footer-tagline">
+                Reducing waste. Supporting communities.
+            </p>
+        </div>
+
+        <div class="sidebar-logout">
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </aside>
+
+
+
+    <main class="main-content donations-content">
+
+        <div id="user-info" class="user-info">
+            <div class="user-avatar">
+                <span id="user-initial">U</span>
+            </div>
+
+            <div class="user-details">
+                <span id="user-name"></span>
+                <span id="user-role"></span>
+            </div>
+        </div>
+
+        <div class="donations-header">
+            <div>
+                <h1>Donations</h1>
+                <p>Manage food donations</p>
+            </div>
+
+            <button id="add-donation-button" class="primary-button" hidden>
+                + Add Donation
+            </button>
+        </div>
+
+
+        <!-- Admin Donation Tabs -->
+        <div id="admin-donation-tabs" class="donation-tabs" hidden>
+            <button
+                type="button"
+                id="active-donations-tab"
+                class="donation-tab active">
+                Active Donations
+            </button>
+
+            <button
+                type="button"
+                id="archived-donations-tab"
+                class="donation-tab">
+                Archived Donations
+            </button>
+        </div>
+
+
+
+        <!-- Donation Form -->
+        <section id="donation-form-section" class="donation-form-section" hidden>
+            <h3 id="form-title">Add New Donation</h3>
+
+            <form id="donation-form">
+
+                <input type="hidden" id="donation-id">
+
+                <div class="donation-form-grid">
+
+                    <div class="form-group">
+                        <label for="food-name">Food Name</label>
+                        <input type="text" id="food-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <input type="text" id="category" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity-kg">Quantity (kg)</label>
+                        <input type="number" id="quantity-kg" min="0.01" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expiry-date">Expiry Date</label>
+                        <input type="date" id="expiry-date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" required>
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="primary-button" id="save-donation-button">
+                        Save Donation
+                    </button>
+
+                    <button type="button" id="cancel-donation-button" class="secondary-button">
+                        Cancel
+                    </button>
+                </div>
+
+                <p id="form-message"></p>
+
+            </form>
+        </section>
+
+
+        <!-- Search and Filter -->
+        <div id="active-donations-view">
+            <section class="donations-toolbar">
+
+            <input
+                type="search"
+                id="donation-search"
+                placeholder="Search food or location..."
+            >
+
+            <select id="status-filter">
+                <option value="all">All Statuses</option>
+                <option value="available">Available</option>
+                <option value="matched">Matched</option>
+                <option value="completed">Completed</option>
+                <option value="collected">Collected</option>
+            </select>
+
+        </section>
+
+
+        <!-- Donations Table -->
+        <section class="donations-table-section">
+
+            <table class="donations-table">
+                <thead>
+                    <tr>
+                        <th>Food Name</th>
+                        <th>Category</th>
+                        <th>Quantity</th>
+                        <th>Expiry Date</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="donations-table-body">
+                    <tr>
+                        <td colspan="7">Loading donations...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+        </div>
+
+
+        <!-- Archived Donations -->
+        <section id="archived-donations-view"
+                 class="archived-donations-section"
+                 hidden>
+
+            <div class="archived-section-header">
+                <div>
+                    <h2>Archived Donations</h2>
+                    <p>Donations that have been archived</p>
+                </div>
+            </div>
+
+            <div class="donations-table-section">
+                <table class="donations-table">
+                    <thead>
+                        <tr>
+                            <th>Food Name</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Expiry Date</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Archived At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="archived-donations-table-body">
+                        <tr>
+                            <td colspan="8">No archived donations found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+
+        <p id="donations-message" class="donations-message"></p>
+
+    </main>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script src="{{ url_for('static', filename='js/user-info.js') }}"></script>
+<script src="{{ url_for('static', filename='js/donations.js') }}"></script>
+
+</body>
+</html>

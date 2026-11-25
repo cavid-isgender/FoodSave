@@ -1,0 +1,307 @@
+
+/* Donations Page */
+
+.donations-content {
+    padding: 25px 30px;
+}
+
+.donations-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.donations-header h1 {
+    margin: 0 0 4px;
+}
+
+.donations-header p {
+    margin: 0;
+    color: #777;
+    font-size: 13px;
+}
+
+.primary-button,
+.secondary-button {
+    border: none;
+    border-radius: 6px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.primary-button {
+    background: #23845b;
+    color: white;
+}
+
+.secondary-button {
+    background: #e9ecef;
+    color: #333;
+}
+
+.donation-form-section {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 18px;
+}
+
+.donation-form-section h3 {
+    margin: 0 0 14px;
+    font-size: 16px;
+}
+
+.donation-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-size: 12px;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.donations-toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.donations-toolbar input,
+.donations-toolbar select {
+    padding: 9px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.donations-toolbar input {
+    flex: 1;
+}
+
+.donations-table-section {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.donations-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.donations-table th,
+.donations-table td {
+    padding: 11px 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+}
+
+.donations-table th {
+    background: #f7f8f7;
+    color: #555;
+    font-weight: 600;
+}
+
+.donations-table tr:last-child td {
+    border-bottom: none;
+}
+
+.status-label {
+    display: inline-block;
+    padding: 4px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    background: #eee;
+}
+
+.status-available {
+    background: #e2f4e9;
+    color: #237443;
+}
+
+.status-matched {
+    background: #fff0d8;
+    color: #936018;
+}
+
+.status-completed,
+.status-collected {
+    background: #e5ebf8;
+    color: #38588c;
+}
+
+.action-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 12px;
+}
+
+.edit-button {
+    color: #2869a6;
+}
+
+.delete-button {
+    color: #c0392b;
+}
+
+.match-button {
+    color: #23845b;
+}
+
+.donations-message {
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+@media (max-width: 800px) {
+    .donations-content {
+        padding: 18px;
+    }
+
+    .donation-form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 500px) {
+    .donations-header {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .donation-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .donations-toolbar {
+        flex-direction: column;
+    }
+}
+
+
+
+/* ======================================
+   Admin Donation Tabs
+====================================== */
+
+.donation-tabs {
+    display: flex;
+    gap: 12px;
+    margin: 25px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.donation-tab {
+    padding: 12px 20px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.donation-tab:hover {
+    color: var(--primary);
+}
+
+.donation-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+
+/* ======================================
+   Archived Donations
+====================================== */
+
+.archived-donations-section {
+    margin-top: 25px;
+}
+
+.archived-section-header {
+    margin-bottom: 20px;
+}
+
+.archived-section-header h2 {
+    font-size: 20px;
+    margin-bottom: 7px;
+}
+
+.archived-section-header p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.archived-donations-section .donations-table-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+}
+
+@media (max-width: 650px) {
+
+    .donation-tabs {
+        gap: 5px;
+    }
+
+    .donation-tab {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    .archived-donations-section .donations-table-section {
+        padding: 12px;
+    }
+}
+
+.restore-button {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.restore-button:hover {
+    background-color: #c8e6c9;
+}
+
