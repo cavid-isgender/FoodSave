@@ -208,29 +208,30 @@ The database connection is configured using environment variables to keep sensit
 The following diagram illustrates the database entities and their relationships.
 
 ```mermaid
+  
 erDiagram
     USERS {
         int id PK
-        string name
-        string email UK
-        string password
-        string role
-        datetime created_at
+        varchar name
+        varchar email
+        varchar password
+        varchar role
+        timestamp created_at
     }
 
     ORGANIZATIONS {
         int id PK
-        int user_id FK, UK
-        string organization_name
-        string location
+        int user_id FK
+        varchar organization_name
+        varchar location
         float capacity_kg
-        string phone
-        string accepted_categories
+        varchar phone
+        varchar accepted_categories
     }
 
     FOOD_CATEGORIES {
         int id PK
-        string name UK
+        varchar name
     }
 
     ORGANIZATION_CATEGORIES {
@@ -241,45 +242,116 @@ erDiagram
     FOOD_DONATIONS {
         int id PK
         int donor_id FK
-        string food_name
-        string category
+        varchar food_name
+        varchar category
         float quantity_kg
         date expiry_date
-        string location
-        string status
-        datetime created_at
+        varchar location
+        varchar status
+        timestamp created_at
         boolean is_archived
-        datetime archived_at
+        timestamp archived_at
     }
 
     MATCHES {
         int id PK
         int donation_id FK
         int organization_id FK
-        string status
-        datetime matched_at
+        varchar status
+        timestamp matched_at
+    }
+
+    FOOD_WASTE_PREDICTIONS {
+        int id PK
+        int user_id FK
+        int meals_served
+        int kitchen_staff
+        numeric temperature_c
+        numeric humidity_percent
+        int day_of_week
+        int special_event
+        numeric past_waste_kg
+        varchar staff_experience
+        varchar waste_category
+        numeric predicted_food_waste_kg
+        timestamp created_at
     }
 
     PREDICTION_LOGS {
         int id PK
         int donor_id FK
-        float predicted_waste
-        float actual_waste
-        datetime prediction_date
+        double predicted_waste
+        double actual_waste
+        timestamp prediction_date
     }
 
     USERS ||--o| ORGANIZATIONS : has
     USERS ||--o{ FOOD_DONATIONS : creates
-    USERS ||--o{ PREDICTION_LOGS : records
-
-    FOOD_DONATIONS ||--o{ MATCHES : has
+    USERS ||--o{ FOOD_WASTE_PREDICTIONS : generates
+    USERS ||--o{ PREDICTION_LOGS : has
     ORGANIZATIONS ||--o{ MATCHES : receives
-
-    ORGANIZATIONS ||--o{ ORGANIZATION_CATEGORIES : has
+    FOOD_DONATIONS ||--o{ MATCHES : has
+    ORGANIZATIONS ||--o{ ORGANIZATION_CATEGORIES : accepts
     FOOD_CATEGORIES ||--o{ ORGANIZATION_CATEGORIES : includes
+
 ```
 
 ---
+
+
+## System Architecture
+
+FoodSave follows a modular web application architecture. The frontend communicates with the Flask backend through HTTP requests. The backend handles authentication, donation management, organization matching, database operations, and machine learning predictions.
+
+### Architecture Diagram
+
+The following diagram illustrates the main components of the FoodSave application and how they interact.
+
+```mermaid
+flowchart TB
+    U["User"]
+    FE["Frontend<br/>HTML, CSS, JavaScript<br/>Jinja2 Templates"]
+
+    subgraph FLASK["Flask Application"]
+        APP["Application Initialization<br/>app/__init__.py"]
+        ROUTES["Routes<br/>app/routes.py"]
+        AUTH["Authentication<br/>JWT + Flask-Bcrypt"]
+        MATCH["Matching Engine<br/>app/matching_engine.py"]
+        ORM["Database Models<br/>app/models.py"]
+
+        subgraph ML["Machine Learning Component"]
+            PRED["Prediction Logic"]
+            DATA["Pandas DataFrame"]
+            MODEL["Trained Model<br/>food_waste_model.pkl"]
+        end
+    end
+
+    DB[("PostgreSQL Database")]
+
+    U <--> FE
+    FE <-->|HTTP Requests / Responses| ROUTES
+    APP --> ROUTES
+    ROUTES <--> AUTH
+    ROUTES --> MATCH
+    MATCH <--> ORM
+    ROUTES <--> ORM
+    ORM <--> DB
+    ROUTES --> PRED
+    PRED --> DATA
+    DATA --> MODEL
+    MODEL --> PRED
+    PRED --> ROUTES
+```
+
+### Main Components
+
+- **Frontend:** Provides the user interface using HTML, CSS, JavaScript, and Jinja2 templates.
+- **Flask Backend:** Handles incoming requests and coordinates application functionality.
+- **Authentication:** Manages user authentication and password hashing using JWT and Flask-Bcrypt.
+- **Matching Engine:** Finds suitable organizations for available food donations.
+- **Database Layer:** Uses Flask-SQLAlchemy and SQLAlchemy to communicate with PostgreSQL.
+- **Machine Learning Component:** Uses Pandas and the trained Scikit-learn model to predict food waste.
+
 
 ## Installation and Setup
 
@@ -385,6 +457,187 @@ The application provides backend routes for managing donations, matching organiz
 The API uses JSON for data exchange where applicable. Protected endpoints require valid JWT authentication.
 
 ---
+
+
+## API Documentation
+
+FoodSave provides REST-style API endpoints for authentication, user management, food donations, organization matching, dashboard statistics, and food waste prediction.
+
+### Authentication
+
+Most API endpoints require JWT authentication.
+
+Include the access token in the request header:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+The application uses:
+- Access tokens with a 15-minute expiration.
+- Refresh tokens with a 7-day expiration.
+
+### Authentication Endpoints
+
+| Method | Endpoint | Description | Authentication |
+|---|---|---|---|
+| POST | `/register` | Register a new user | No |
+| POST | `/login` | Authenticate a user and receive access and refresh tokens | No |
+| POST | `/refresh` | Generate a new access token | Refresh token |
+
+### User Endpoints
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/users` | Retrieve all users | Admin only |
+
+### Food Donation Endpoints
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/donations` | Retrieve donations according to user role | Authenticated users |
+| GET | `/donations/<donation_id>` | Retrieve a specific donation | Authenticated users with permission |
+| POST | `/donations` | Create a new food donation | Donor |
+| PUT | `/donations/<donation_id>` | Update a donation | Owner or admin |
+| DELETE | `/donations/<donation_id>` | Archive a donation | Owner or admin |
+| GET | `/donations/my` | Retrieve the donor's donation history | Donor |
+| POST | `/donations/<donation_id>/restore` | Restore an archived donation | Admin |
+
+The donation archive feature uses soft deletion, preserving donation records instead of permanently deleting them.
+
+### Organization Endpoints
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/organizations` | Retrieve all organizations | Authenticated users |
+| GET | `/organizations/<organization_id>` | Retrieve a specific organization | Authenticated users |
+| GET | `/organizations/me/matches` | Retrieve matches belonging to the current organization | Organization |
+| GET | `/organizations/me/donations` | Retrieve donations associated with the organization's matches | Organization |
+
+### Donation Matching Endpoints
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| POST | `/donations/<donation_id>/match` | Find suitable organizations for a donation and create match requests | Donation owner or admin |
+| POST | `/matches` | Create a match request for a donation | Organization |
+| GET | `/matches/<match_id>` | Retrieve match details | Related donor, organization, or admin |
+| GET | `/donor/requests` | Retrieve incoming organization requests | Donor |
+| POST | `/matches/<match_id>/accept` | Accept a match request | Donor |
+| POST | `/matches/<match_id>/reject` | Reject a match request | Donor |
+| POST | `/matches/<match_id>/complete` | Mark an accepted match as completed | Related organization |
+
+### Dashboard Endpoint
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/dashboard/stats` | Retrieve dashboard statistics based on the user's role | Authenticated users |
+
+### Machine Learning Endpoints
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| POST | `/predict/food-waste` | Predict food waste and save the prediction result | Authenticated users |
+| GET | `/predictions` | Retrieve the current user's prediction history | Authenticated users |
+
+### Example API Requests
+
+#### 1. User Registration
+
+**POST** `/register`
+
+Request body:
+
+```json
+{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "your_password",
+    "role": "donor"
+}
+```
+
+#### 2. User Login
+
+**POST** `/login`
+
+Request body:
+
+```json
+{
+    "email": "john@example.com",
+    "password": "your_password"
+}
+```
+
+The response includes an access token and a refresh token.
+
+#### 3. Create a Food Donation
+
+**POST** `/donations`
+
+Request body:
+
+```json
+{
+    "food_name": "Fresh Vegetables",
+    "category": "Vegetables",
+    "quantity_kg": 25,
+    "expiry_date": "2026-12-01",
+    "location": "Lodz"
+}
+```
+
+Requires a donor access token.
+
+#### 4. Request Food Waste Prediction
+
+**POST** `/predict/food-waste`
+
+Request body:
+
+```json
+{
+    "meals_served": 150,
+    "kitchen_staff": 5,
+    "temperature_c": 22.5,
+    "humidity_percent": 60,
+    "day_of_week": 2,
+    "special_event": 0,
+    "past_waste_kg": 12.5,
+    "staff_experience": "experienced",
+    "waste_category": "vegetables"
+}
+```
+
+The prediction result is returned in kilograms and saved for the authenticated user.
+
+### HTTP Status Codes
+
+| Status Code | Meaning |
+|---|---|
+| 200 | Request completed successfully |
+| 201 | Resource created successfully |
+| 400 | Invalid request or input data |
+| 401 | Authentication required or invalid credentials/token |
+| 403 | Access forbidden |
+| 404 | Resource not found |
+| 409 | Conflict with the current resource state |
+| 500 | Internal server error |
+
+### Frontend Pages
+
+In addition to the JSON API, the Flask application provides the following HTML pages:
+
+| Method | Route | Description |
+|---|---|---|
+| GET | `/` | Redirects to the login page |
+| GET | `/login-page` | Login page |
+| GET | `/register-page` | Registration page |
+| GET | `/dashboard` | Dashboard page |
+| GET | `/food-waste-prediction` | Food waste prediction page |
+| GET | `/donations-page` | Donations page |
+| GET | `/organizations-page` | Organizations page |
+
 
 ## Future Improvements
 
