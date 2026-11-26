@@ -353,6 +353,35 @@ flowchart TB
 - **Machine Learning Component:** Uses Pandas and the trained Scikit-learn model to predict food waste.
 
 
+
+## Screenshots
+
+### Dashboard
+The dashboard provides an overview of food waste predictions, donation statistics, and monthly activity.
+
+![FoodSave Dashboard](docs/screenshots/dashboard.png)
+
+### Food Waste Prediction
+The machine learning module allows users to estimate food waste based on operational and environmental factors.
+
+![Food Waste Prediction](docs/screenshots/predictions.png)
+
+### Donations
+Users can create, view, update, and manage food donations.
+
+![Food Donations](docs/screenshots/donations.png)
+
+### Organizations
+Displays registered organizations and their information.
+
+![Organizations](docs/screenshots/organizations.png)
+
+### Login
+The authentication interface allows users to securely access the FoodSave platform.
+
+![Login Page](docs/screenshots/login.png)
+
+
 ## Installation and Setup
 
 Follow these steps to run the project locally.
